@@ -1,129 +1,540 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>МойСклад Тестовый Виджет</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 15px;
-            font-size: 14px;
-            margin: 0;
-            background-color: #f7f7f7;
-            height: 100vh; /* Важно для iframe */
-        }
-        .container {
-            max-width: 600px;
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        h1 {
-            font-size: 18px;
-            color: #333;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-            margin-top: 0;
-        }
-        .info {
-            margin-top: 15px;
-        }
-        .object-id {
-            background-color: #e0f2fe;
-            color: #0369a1;
-            padding: 8px;
-            border-radius: 4px;
-            font-weight: bold;
-            display: block;
-            margin-top: 5px;
-            word-break: break-all;
-        }
-        .status-msg {
-            color: green;
-            font-weight: 600;
-        }
-        .error-msg {
-            color: red;
-        }
-    </style>
+  <meta charset="utf-8">
+
+  <title>PrettyOrder — виджет заказа</title>
+  <meta name="description" content="PrettyOrder Widget for MoySklad">
+
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .root {
+      padding: 12px;
+    }
+
+    .title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .subtitle {
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 12px;
+    }
+
+    .section {
+      margin-top: 12px;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      background: #f9fafb;
+    }
+
+    .section h2 {
+      margin: 0 0 6px 0;
+      font-size: 13px;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .field-label {
+      font-size: 11px;
+      color: #6b7280;
+      margin-bottom: 2px;
+    }
+
+    .field-value {
+      font-size: 13px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      word-break: break-all;
+    }
+
+    .row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+
+    .input {
+      flex: 1 1 auto;
+      min-width: 0;
+      padding: 4px 6px;
+      border-radius: 6px;
+      border: 1px solid #d1d5db;
+      font-size: 12px;
+      font-family: inherit;
+      background: #ffffff;
+    }
+
+    .input[readonly] {
+      background: #f3f4f6;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid #d1d5db;
+      background: #ffffff;
+      font-size: 12px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: #ffffff;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+
+    .switch-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .switch-row label {
+      font-size: 12px;
+      color: #374151;
+      cursor: pointer;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 6px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .badge-green {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .badge-gray {
+      background: #e5e7eb;
+      color: #374151;
+    }
+
+    .status {
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .status-ok {
+      color: #15803d;
+    }
+
+    .status-error {
+      color: #b91c1c;
+    }
+
+    .status-info {
+      color: #4b5563;
+    }
+
+    .messages {
+      font-size: 11px;
+      background: #111827;
+      color: #e5e7eb;
+      border-radius: 6px;
+      padding: 6px;
+      max-height: 160px;
+      overflow: auto;
+      margin-top: 4px;
+    }
+
+    .messages-item {
+      margin-bottom: 2px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .hint {
+      cursor: default;
+      color: #9ca3af;
+    }
+  </style>
 </head>
 <body>
+<div class="root">
+  <div class="title">PrettyOrder — виджет заказа</div>
+  <div class="subtitle">
+    Формируем красивую подборку товаров по заказу покупателя и делимся ссылкой с клиентом.
+  </div>
 
-    <div class="container">
-        <h1>Тестовый Виджет МойСклад (Чистый JS)</h1>
+  <!-- Блок: контекст -->
+  <div class="section">
+    <h2>Контекст</h2>
 
-        <div class="info">
-            <strong>ID Заказа (objectId):</strong>
-            <div id="objectIdDisplay" class="object-id">
-                Ожидание сообщения 'Open'...
-            </div>
-        </div>
-        
-        <div class="info">
-            <strong>Статус:</strong>
-            <span id="statusMessage" class="status-msg">Инициализация...</span>
-        </div>
+    <div class="field-label">contextKey из URL (для бэкенда):</div>
+    <div id="contextKey" class="field-value">—</div>
 
-        <div class="info">
-            <strong>Лог последнего сообщения:</strong>
-            <pre id="debugLog" style="background:#eee; padding:10px; border-radius:4px; font-size:10px; max-height:150px; overflow:auto;"></pre>
-        </div>
+    <div class="field-label" style="margin-top:6px;">ID заказа покупателя (objectId из Open):</div>
+    <div id="objectId" class="field-value">Ожидаем сообщение Open…</div>
+  </div>
+
+  <!-- Блок: ссылка для клиента -->
+  <div class="section">
+    <h2>
+      Публичная ссылка для клиента
+      <span id="linkBadge" class="badge badge-gray" style="margin-left:6px;">Ссылка не создана</span>
+    </h2>
+
+    <div class="row">
+      <input id="linkUrl" class="input" type="text" readonly placeholder="Ссылка ещё не создана">
+      <button id="copyBtn" class="btn" type="button" disabled>Копировать</button>
+      <button id="refreshBtn" class="btn" type="button" disabled>Обновить</button>
     </div>
 
-    <script>
-        // Элементы DOM
-        const objectIdDisplay = document.getElementById('objectIdDisplay');
-        const statusMessage = document.getElementById('statusMessage');
-        const debugLog = document.getElementById('debugLog');
+    <div class="switch-row">
+      <input type="checkbox" id="hidePrices">
+      <label for="hidePrices">Скрыть цены</label>
+    </div>
+    <div class="switch-row">
+      <input type="checkbox" id="hideTotal">
+      <label for="hideTotal">Скрыть итоговую сумму</label>
+    </div>
 
-        // Глобальная функция для обработки сообщений
-        function handleMessage(event) {
-            const data = event.data;
-            debugLog.textContent = JSON.stringify(data, null, 2);
+    <div class="row" style="margin-top:8px;">
+      <button id="createOrSaveBtn" class="btn btn-primary" type="button" disabled>
+        Создать ссылку
+      </button>
+    </div>
 
-            if (data && typeof data === 'object' && data.name === 'Open') {
-                const objectId = data.objectId || data.context?.id; // Пробуем оба варианта ключа
-                
-                if (objectId) {
-                    objectIdDisplay.textContent = objectId;
-                    statusMessage.textContent = 'Данные успешно получены!';
-                    statusMessage.className = 'status-msg';
+    <div id="statusText" class="status status-info"></div>
+  </div>
 
-                    // Важно: Отправляем ответ, чтобы уведомить родительское окно о высоте
-                    updateWidgetSize();
-                } else {
-                    statusMessage.textContent = 'Сообщение Open получено, но objectId отсутствует.';
-                    statusMessage.className = 'error-msg';
-                }
-            }
-        }
+  <!-- Блок: сообщения -->
+  <div class="section">
+    <h2>
+      Сообщения <span class="hint" title="Лог входящих от хост-окна и исходящих от виджета сообщений (postMessage)">(?)</span>
+    </h2>
+    <div id="messages" class="messages"></div>
+  </div>
+</div>
 
-        // Функция для уведомления МоегоСклада об изменении размера
-        function updateWidgetSize() {
-            if (window.parent) {
-                window.parent.postMessage({
-                    name: 'updateSize',
-                    width: '100%',
-                    height: document.body.scrollHeight + 30 // Высота контента + небольшой запас
-                }, '*');
-            }
-        }
+<script>
+  (function () {
+    // ⚙️ НАСТРОЙКИ — ЗАМЕНИ ЭТО НА СВОЙ БЭКЕНД
+    // Базовый URL твоего API (без завершающего слэша)
+    var BACKEND_BASE_URL = 'https://YOUR_BACKEND_HOST/api';
 
-        // ----------------------------------------------------
-        // КЛЮЧЕВОЙ МОМЕНТ: Вешаем слушатель СРАЗУ
-        // ----------------------------------------------------
-        if (window) {
-            window.addEventListener('message', handleMessage);
-            statusMessage.textContent = 'Слушатель сообщений активен.';
-        }
-        
-        // Дополнительный пинг, который часто помогает МойСклад начать взаимодействие
-        document.addEventListener('DOMContentLoaded', () => {
-            updateWidgetSize(); // Отправляем размер, как только DOM загружен
-            console.log("DOM Loaded. Listener attached and size requested.");
+    // Эндпоинт, который возвращает и/или создаёт ссылку.
+    // Предполагаемый контракт:
+    //  POST { contextKey, objectId, hide_prices?, hide_total? }
+    //  ↪ { exists: bool, link_url?: string, hide_prices?: bool, hide_total?: bool }
+    var PUBLIC_ORDER_ENDPOINT = BACKEND_BASE_URL + '/moysklad/public-order/';
+
+    // 🔧 Вспомогательные функции DOM
+    function $(id) {
+      return window.document.getElementById(id);
+    }
+
+    function setText(id, text) {
+      var el = $(id);
+      if (el) el.textContent = text;
+    }
+
+    function setValue(id, value) {
+      var el = $(id);
+      if (el) el.value = value;
+    }
+
+    function setDisabled(id, disabled) {
+      var el = $(id);
+      if (el) el.disabled = disabled;
+    }
+
+    function setBadge(exists) {
+      var el = $('linkBadge');
+      if (!el) return;
+      if (exists) {
+        el.className = 'badge badge-green';
+        el.textContent = 'Ссылка создана';
+      } else {
+        el.className = 'badge badge-gray';
+        el.textContent = 'Ссылка не создана';
+      }
+    }
+
+    function setStatus(text, type) {
+      var el = $('statusText');
+      if (!el) return;
+      el.textContent = text || '';
+      el.className = 'status ' + (type || 'status-info');
+    }
+
+    function addMessage(prefix, msg) {
+      var messages = $('messages');
+      if (!messages) return;
+      var line = document.createElement('div');
+      line.className = 'messages-item';
+      var asString;
+      try {
+        asString = JSON.stringify(msg);
+      } catch (e) {
+        asString = String(msg);
+      }
+      line.textContent = prefix + ' ' + asString;
+      messages.insertBefore(line, messages.firstChild);
+    }
+
+    function logReceivedMessage(msg) {
+      addMessage('→ Received', msg);
+      console.log('→ Received message:', msg);
+    }
+
+    function logSendingMessage(msg) {
+      addMessage('← Sending', msg);
+      console.log('← Sending message:', msg);
+    }
+
+    // 🔑 contextKey из query
+    var contextKey = null;
+    (function readContextKey() {
+      try {
+        var params = new URLSearchParams(window.location.search);
+        contextKey = params.get('contextKey');
+        setText('contextKey', contextKey || '— не найден в query-параметрах');
+      } catch (e) {
+        console.error('Failed to read contextKey:', e);
+      }
+    })();
+
+    // 🧾 objectId из сообщения Open
+    var objectId = null;
+    var hostWindow = window.parent || window.top;
+
+    // Состояние формы
+    function syncFormFromResponse(data) {
+      var exists = !!data && !!data.exists;
+      setBadge(exists);
+
+      var urlInput = $('linkUrl');
+      if (!urlInput) return;
+
+      if (exists && data.link_url) {
+        urlInput.value = data.link_url;
+        setDisabled('copyBtn', false);
+        setDisabled('refreshBtn', false);
+        setDisabled('createOrSaveBtn', false);
+        $('createOrSaveBtn').textContent = 'Сохранить настройки';
+      } else {
+        urlInput.value = '';
+        urlInput.placeholder = 'Ссылка ещё не создана';
+        setDisabled('copyBtn', true);
+        setDisabled('refreshBtn', false);
+        setDisabled('createOrSaveBtn', false);
+        $('createOrSaveBtn').textContent = 'Создать ссылку';
+      }
+
+      if (data && typeof data.hide_prices === 'boolean') {
+        $('hidePrices').checked = data.hide_prices;
+      }
+      if (data && typeof data.hide_total === 'boolean') {
+        $('hideTotal').checked = data.hide_total;
+      }
+    }
+
+    // 🚀 Загрузка состояния ссылки с бэкенда
+    function loadPublicOrder() {
+      if (!contextKey || !objectId) {
+        setStatus('Нет contextKey или objectId — ждём данные от МойСклада…', 'status-info');
+        return;
+      }
+
+      setStatus('Загружаем состояние ссылки…', 'status-info');
+      setDisabled('createOrSaveBtn', true);
+      setDisabled('refreshBtn', true);
+
+      var payload = {
+        contextKey: contextKey,
+        objectId: objectId
+      };
+
+      fetch(PUBLIC_ORDER_ENDPOINT, {
+        method: 'POST', // предполагаем апсертом/получение
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      })
+        .then(function (res) {
+          if (!res.ok) {
+            throw new Error('HTTP ' + res.status);
+          }
+          return res.json();
+        })
+        .then(function (data) {
+          setStatus('Состояние ссылки загружено', 'status-ok');
+          syncFormFromResponse(data || {});
+        })
+        .catch(function (err) {
+          console.error('Failed to load public order:', err);
+          setStatus('Ошибка загрузки состояния ссылки: ' + err.message, 'status-error');
+          syncFormFromResponse({ exists: false });
+        })
+        .finally(function () {
+          setDisabled('createOrSaveBtn', false);
+          setDisabled('refreshBtn', false);
         });
+    }
 
-    </script>
+    // 💾 Создание/обновление ссылки
+    function savePublicOrder() {
+      if (!contextKey || !objectId) {
+        setStatus('Нет contextKey или objectId — МойСклад ещё не передал контекст', 'status-error');
+        return;
+      }
+
+      var hidePrices = $('hidePrices').checked;
+      var hideTotal = $('hideTotal').checked;
+
+      setStatus('Сохраняем ссылку…', 'status-info');
+      setDisabled('createOrSaveBtn', true);
+
+      var payload = {
+        contextKey: contextKey,
+        objectId: objectId,
+        hide_prices: hidePrices,
+        hide_total: hideTotal
+      };
+
+      fetch(PUBLIC_ORDER_ENDPOINT, {
+        method: 'PATCH', // или POST, если удобнее — на бэкенде можешь принимать оба
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      })
+        .then(function (res) {
+          if (!res.ok) {
+            throw new Error('HTTP ' + res.status);
+          }
+          return res.json();
+        })
+        .then(function (data) {
+          setStatus('Ссылка сохранена', 'status-ok');
+          syncFormFromResponse(data || {});
+        })
+        .catch(function (err) {
+          console.error('Failed to save public order:', err);
+          setStatus('Ошибка сохранения ссылки: ' + err.message, 'status-error');
+        })
+        .finally(function () {
+          setDisabled('createOrSaveBtn', false);
+        });
+    }
+
+    // 📋 Копирование ссылки
+    function copyLinkToClipboard() {
+      var urlInput = $('linkUrl');
+      if (!urlInput || !urlInput.value) return;
+      urlInput.select();
+      urlInput.setSelectionRange(0, 99999);
+      try {
+        var ok = document.execCommand('copy');
+        if (ok) {
+          setStatus('Ссылка скопирована в буфер обмена', 'status-ok');
+        } else {
+          setStatus('Не удалось скопировать ссылку', 'status-error');
+        }
+      } catch (e) {
+        setStatus('Ошибка копирования: ' + e.message, 'status-error');
+      } finally {
+        window.getSelection().removeAllRanges();
+      }
+    }
+
+    // 🔔 OpenFeedback (как в демо — по желанию)
+    function sendOpenFeedback(receivedMessage) {
+      if (!receivedMessage || typeof receivedMessage !== 'object') return;
+      if (!receivedMessage.messageId) return;
+
+      var sendingMessage = {
+        name: 'OpenFeedback',
+        correlationId: receivedMessage.messageId
+      };
+      logSendingMessage(sendingMessage);
+      if (hostWindow && hostWindow.postMessage) {
+        hostWindow.postMessage(sendingMessage, '*');
+      }
+    }
+
+    // 📨 Обработчик postMessage от МоегоСклада
+    window.addEventListener('message', function (event) {
+      var receivedMessage = event.data;
+      logReceivedMessage(receivedMessage);
+
+      if (!receivedMessage || typeof receivedMessage !== 'object') return;
+
+      if (receivedMessage.name === 'Open') {
+        objectId = receivedMessage.objectId || null;
+        setText('objectId', objectId || 'objectId = null (например, при создании документа)');
+
+        // Загружаем/создаём ссылку на основании contextKey + objectId
+        loadPublicOrder();
+
+        // Опционально отправляем OpenFeedback (как в демо)
+        window.setTimeout(function () {
+          sendOpenFeedback(receivedMessage);
+        }, 200);
+      }
+    });
+
+    // 🔘 Привязываем кнопки
+    window.addEventListener('DOMContentLoaded', function () {
+      var createBtn = $('createOrSaveBtn');
+      var copyBtn = $('copyBtn');
+      var refreshBtn = $('refreshBtn');
+
+      if (createBtn) {
+        createBtn.addEventListener('click', function () {
+          savePublicOrder();
+        });
+      }
+      if (copyBtn) {
+        copyBtn.addEventListener('click', function () {
+          copyLinkToClipboard();
+        });
+      }
+      if (refreshBtn) {
+        refreshBtn.addEventListener('click', function () {
+          loadPublicOrder();
+        });
+      }
+
+      // При первом заходе у нас ещё нет objectId — ждём Open
+      setStatus('Ждём данные от МойСклада…', 'status-info');
+      setDisabled('createOrSaveBtn', false);
+      setDisabled('refreshBtn', false);
+    });
+  })();
+</script>
 </body>
 </html>
