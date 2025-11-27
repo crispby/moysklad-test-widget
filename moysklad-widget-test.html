@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>МойСклад Тестовый Виджет</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 15px;
+            font-size: 14px;
+            margin: 0;
+            background-color: #f7f7f7;
+            height: 100vh; /* Важно для iframe */
+        }
+        .container {
+            max-width: 600px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 18px;
+            color: #333;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        .info {
+            margin-top: 15px;
+        }
+        .object-id {
+            background-color: #e0f2fe;
+            color: #0369a1;
+            padding: 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            display: block;
+            margin-top: 5px;
+            word-break: break-all;
+        }
+        .status-msg {
+            color: green;
+            font-weight: 600;
+        }
+        .error-msg {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Тестовый Виджет МойСклад (Чистый JS)</h1>
+
+        <div class="info">
+            <strong>ID Заказа (objectId):</strong>
+            <div id="objectIdDisplay" class="object-id">
+                Ожидание сообщения 'Open'...
+            </div>
+        </div>
+        
+        <div class="info">
+            <strong>Статус:</strong>
+            <span id="statusMessage" class="status-msg">Инициализация...</span>
+        </div>
+
+        <div class="info">
+            <strong>Лог последнего сообщения:</strong>
+            <pre id="debugLog" style="background:#eee; padding:10px; border-radius:4px; font-size:10px; max-height:150px; overflow:auto;"></pre>
+        </div>
+    </div>
+
+    <script>
+        // Элементы DOM
+        const objectIdDisplay = document.getElementById('objectIdDisplay');
+        const statusMessage = document.getElementById('statusMessage');
+        const debugLog = document.getElementById('debugLog');
+
+        // Глобальная функция для обработки сообщений
+        function handleMessage(event) {
+            const data = event.data;
+            debugLog.textContent = JSON.stringify(data, null, 2);
+
+            if (data && typeof data === 'object' && data.name === 'Open') {
+                const objectId = data.objectId || data.context?.id; // Пробуем оба варианта ключа
+                
+                if (objectId) {
+                    objectIdDisplay.textContent = objectId;
+                    statusMessage.textContent = 'Данные успешно получены!';
+                    statusMessage.className = 'status-msg';
+
+                    // Важно: Отправляем ответ, чтобы уведомить родительское окно о высоте
+                    updateWidgetSize();
+                } else {
+                    statusMessage.textContent = 'Сообщение Open получено, но objectId отсутствует.';
+                    statusMessage.className = 'error-msg';
+                }
+            }
+        }
+
+        // Функция для уведомления МоегоСклада об изменении размера
+        function updateWidgetSize() {
+            if (window.parent) {
+                window.parent.postMessage({
+                    name: 'updateSize',
+                    width: '100%',
+                    height: document.body.scrollHeight + 30 // Высота контента + небольшой запас
+                }, '*');
+            }
+        }
+
+        // ----------------------------------------------------
+        // КЛЮЧЕВОЙ МОМЕНТ: Вешаем слушатель СРАЗУ
+        // ----------------------------------------------------
+        if (window) {
+            window.addEventListener('message', handleMessage);
+            statusMessage.textContent = 'Слушатель сообщений активен.';
+        }
+        
+        // Дополнительный пинг, который часто помогает МойСклад начать взаимодействие
+        document.addEventListener('DOMContentLoaded', () => {
+            updateWidgetSize(); // Отправляем размер, как только DOM загружен
+            console.log("DOM Loaded. Listener attached and size requested.");
+        });
+
+    </script>
+</body>
+</html>
