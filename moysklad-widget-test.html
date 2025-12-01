@@ -19,9 +19,10 @@
       };
     </script>
   </head>
-  <body class="h-full m-0 p-0 box-border font-sans text-[13px] leading-snug">
+  <body class="h-full m-0 p-0 box-border font-sans text-[13px] leading-snug bg-slate-50">
     <div class="p-3 space-y-3">
-      <div>
+      <!-- Заголовок -->
+      <div class="text-center">
         <div class="text-[16px] font-semibold mb-1">
           PrettyOrder — виджет заказа
         </div>
@@ -30,27 +31,27 @@
         </div>
       </div>
 
-      <!-- Ссылка для клиента -->
-      <section class="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 space-y-2">
-        <div class="flex items-center justify-between gap-2">
-          <h2 class="text-[13px] font-semibold text-slate-900">
-            Публичная ссылка для клиента
-          </h2>
-          <span
-            id="linkBadge"
-            class="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium bg-slate-200 text-slate-700"
-          >
-            Ссылка не создана
-          </span>
+      <!-- Верхний блок: текущая ссылка -->
+      <section class="mt-2 flex flex-col items-center text-center gap-2">
+        <!-- Состояние: ссылки нет -->
+        <div
+          id="linkEmpty"
+          class="flex items-center gap-1 text-xs text-slate-500"
+        >
+          <span>🔗</span>
+          <span>Ссылка ещё не создана</span>
         </div>
 
-        <div class="flex flex-wrap items-center gap-2 mt-1.5">
+        <!-- Состояние: ссылка есть -->
+        <div
+          id="linkArea"
+          class="hidden w-full max-w-xl flex flex-wrap items-center justify-center gap-2"
+        >
           <input
             id="linkUrl"
             type="text"
             readonly
-            placeholder="Ссылка ещё не создана"
-            class="flex-1 min-w-0 px-2 py-1.5 rounded-md border border-slate-300 text-xs bg-white read-only:bg-slate-100 focus:outline-none focus:ring-1 focus:ring-slate-400"
+            class="flex-1 min-w-0 px-2 py-1.5 rounded-md border border-slate-300 text-xs bg-white read-only:bg-slate-50 focus:outline-none focus:ring-1 focus:ring-slate-400"
           />
           <button
             id="copyBtn"
@@ -60,43 +61,55 @@
           >
             Копировать
           </button>
-          <button
-            id="refreshBtn"
-            type="button"
-            disabled
-            class="inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-full border text-xs font-medium bg-white text-slate-700 border-slate-300 disabled:opacity-50 disabled:cursor-default"
+        </div>
+      </section>
+
+      <!-- Нижний блок: настройки (в стиле medusa) -->
+      <section class="mt-3 rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="text-[13px] font-semibold text-slate-900">
+            Настройки ссылки
+          </h2>
+          <span
+            id="linkBadge"
+            class="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium bg-slate-200 text-slate-700"
           >
-            Обновить
-          </button>
+            Ссылка не создана
+          </span>
         </div>
 
-        <div class="flex items-center gap-1.5 mt-1.5">
-          <input id="hidePrices" type="checkbox" class="h-3 w-3 rounded border-slate-300 text-blue-600" />
-          <label for="hidePrices" class="text-[12px] text-slate-700 cursor-pointer">
-            Скрыть цены
+        <div class="space-y-1.5">
+          <label class="flex items-center gap-1.5">
+            <input
+              id="hidePrices"
+              type="checkbox"
+              class="h-3 w-3 rounded border-slate-300 text-indigo-600"
+            />
+            <span class="text-[12px] text-slate-700">Скрыть цены</span>
           </label>
-        </div>
-        <div class="flex items-center gap-1.5 mt-0.5">
-          <input id="hideTotal" type="checkbox" class="h-3 w-3 rounded border-slate-300 text-blue-600" />
-          <label for="hideTotal" class="text-[12px] text-slate-700 cursor-pointer">
-            Скрыть итоговую сумму
+
+          <label class="flex items-center gap-1.5">
+            <input
+              id="hideTotal"
+              type="checkbox"
+              class="h-3 w-3 rounded border-slate-300 text-indigo-600"
+            />
+            <span class="text-[12px] text-slate-700">Скрыть итоговую сумму</span>
           </label>
         </div>
 
-        <div class="flex flex-wrap items-center gap-2 mt-2">
-          <button
-            id="createOrSaveBtn"
-            type="button"
-            disabled
-            class="inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-full border text-xs font-medium bg-blue-600 text-white border-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-default"
-          >
-            Создать ссылку
-          </button>
-        </div>
+        <button
+          id="createOrSaveBtn"
+          type="button"
+          disabled
+          class="mt-3 inline-flex items-center justify-center w-full px-3 py-2 rounded-lg text-[13px] font-medium bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-50 disabled:cursor-default transition-colors"
+        >
+          Создать ссылку
+        </button>
 
         <div
           id="statusText"
-          class="mt-1 text-xs text-slate-500"
+          class="mt-2 text-xs text-slate-500"
         ></div>
       </section>
     </div>
@@ -134,7 +147,7 @@
         function setStatus(text, type) {
           var el = $("statusText");
           if (!el) return;
-          var base = "mt-1 text-xs ";
+          var base = "mt-2 text-xs ";
           var color =
             type === "ok"
               ? "text-emerald-600"
@@ -165,22 +178,35 @@
           var exists = !!data && !!data.exists;
           setBadge(exists);
 
+          var linkEmpty = $("linkEmpty");
+          var linkArea = $("linkArea");
           var urlInput = $("linkUrl");
-          if (!urlInput) return;
+          var copyBtn = $("copyBtn");
+          var mainBtn = $("createOrSaveBtn");
+
+          if (!urlInput || !linkEmpty || !linkArea || !mainBtn) return;
 
           if (exists && data.link_url) {
+            // Показать блок со ссылкой
+            linkEmpty.classList.add("hidden");
+            linkArea.classList.remove("hidden");
+
             urlInput.value = data.link_url;
             setDisabled("copyBtn", false);
-            setDisabled("refreshBtn", false);
             setDisabled("createOrSaveBtn", false);
-            $("createOrSaveBtn").textContent = "Сохранить настройки";
+
+            mainBtn.textContent = "Обновить ссылку";
           } else {
+            // Скрыть блок со ссылкой, показать плейсхолдер
+            linkEmpty.classList.remove("hidden");
+            linkArea.classList.add("hidden");
+
             urlInput.value = "";
             urlInput.placeholder = "Ссылка ещё не создана";
             setDisabled("copyBtn", true);
-            setDisabled("refreshBtn", false);
             setDisabled("createOrSaveBtn", false);
-            $("createOrSaveBtn").textContent = "Создать ссылку";
+
+            mainBtn.textContent = "Создать ссылку";
           }
 
           if (data && typeof data.hide_prices === "boolean") {
@@ -203,7 +229,6 @@
 
           setStatus("Загружаем состояние ссылки…", "info");
           setDisabled("createOrSaveBtn", true);
-          setDisabled("refreshBtn", true);
 
           var payload = {
             context_key: contextKey,
@@ -238,7 +263,6 @@
             })
             .finally(function () {
               setDisabled("createOrSaveBtn", false);
-              setDisabled("refreshBtn", false);
             });
         }
 
@@ -306,7 +330,7 @@
             if (ok) {
               setStatus("Ссылка скопирована в буфер обмена", "ok");
             } else {
-              setStatus("Не удалось скопировать ссылку", "error";
+              setStatus("Не удалось скопировать ссылку", "error");
             }
           } catch (e) {
             setStatus("Ошибка копирования: " + e.message, "error");
@@ -354,7 +378,6 @@
         window.addEventListener("DOMContentLoaded", function () {
           var createBtn = $("createOrSaveBtn");
           var copyBtn = $("copyBtn");
-          var refreshBtn = $("refreshBtn");
 
           if (createBtn) {
             createBtn.addEventListener("click", function () {
@@ -366,15 +389,9 @@
               copyLinkToClipboard();
             });
           }
-          if (refreshBtn) {
-            refreshBtn.addEventListener("click", function () {
-              loadPublicOrder();
-            });
-          }
 
           setStatus("Ждём данные от МойСклада…", "info");
           setDisabled("createOrSaveBtn", false);
-          setDisabled("refreshBtn", false);
         });
       })();
     </script>
