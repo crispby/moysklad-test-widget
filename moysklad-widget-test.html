@@ -291,8 +291,8 @@
           setDisabled("refreshBtn", true);
 
           var payload = {
-            contextKey: contextKey,
-            objectId: objectId,
+            context_key: contextKey,   // для Vendor API на бэкенде
+            ms_order_id: objectId,     // чтобы совпадало с твоей моделью/логикой
           };
 
           fetch(PUBLIC_ORDER_ENDPOINT, {
@@ -343,8 +343,8 @@
           setDisabled("createOrSaveBtn", true);
 
           var payload = {
-            contextKey: contextKey,
-            objectId: objectId,
+            context_key: contextKey,
+            ms_order_id: objectId,
             hide_prices: hidePrices,
             hide_total: hideTotal,
           };
