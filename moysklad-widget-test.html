@@ -16,7 +16,7 @@
     </script>
   </head>
   <body class="h-full m-0 p-0 box-border font-sans text-[13px] leading-snug">
-    <div class="p-3 space-y-3">
+    <div class="space-y-3">
       <!-- Заголовок -->
       <div class="text-center">
         <div class="text-xs text-slate-500">
@@ -310,10 +310,6 @@
               "Нет contextKey или objectId — МойСклад ещё не передал контекст",
               "error"
             );
-            return;
-          }
-
-          if (!confirm("Удалить ссылку для этого заказа?")) {
             return;
           }
 
