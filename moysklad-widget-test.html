@@ -1,12 +1,8 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
   <head>
     <meta charset="utf-8" />
-    <title>PrettyOrder — виджет заказа</title>
-    <meta
-      name="description"
-      content="PrettyOrder Widget for MoySklad"
-    />
+    <meta name="description" content="PrettyOrder Widget for MoySklad" />
 
     <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -19,15 +15,13 @@
       };
     </script>
   </head>
-  <body class="h-full m-0 p-0 box-border font-sans text-[13px] leading-snug bg-slate-50">
+  <body class="h-full m-0 p-0 box-border font-sans text-[13px] leading-snug">
     <div class="p-3 space-y-3">
       <!-- Заголовок -->
       <div class="text-center">
-        <div class="text-[16px] font-semibold mb-1">
-          PrettyOrder — виджет заказа
-        </div>
         <div class="text-xs text-slate-500">
-          Формируем красивую подборку товаров по заказу покупателя и делимся ссылкой с клиентом.
+          Формируем красивую подборку товаров по заказу покупателя и делимся
+          ссылкой с клиентом.
         </div>
       </div>
 
@@ -57,27 +51,17 @@
             id="copyBtn"
             type="button"
             disabled
-            class="inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-full border text-xs font-medium bg-white text-slate-700 border-slate-300 disabled:opacity-50 disabled:cursor-default"
+            class="inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-md border text-xs font-medium bg-white text-slate-700 border-slate-300 disabled:opacity-50 disabled:cursor-default"
           >
             Копировать
           </button>
         </div>
       </section>
 
-      <!-- Нижний блок: настройки (в стиле medusa) -->
-      <section class="mt-3 rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
-        <div class="flex items-center justify-between mb-2">
-          <h2 class="text-[13px] font-semibold text-slate-900">
-            Настройки ссылки
-          </h2>
-          <span
-            id="linkBadge"
-            class="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium bg-slate-200 text-slate-700"
-          >
-            Ссылка не создана
-          </span>
-        </div>
-
+      <!-- Нижний блок: настройки -->
+      <section
+        class="mt-3 rounded-md border border-slate-200 bg-white px-4 py-3 shadow-sm"
+      >
         <div class="space-y-1.5">
           <label class="flex items-center gap-1.5">
             <input
@@ -94,31 +78,46 @@
               type="checkbox"
               class="h-3 w-3 rounded border-slate-300 text-indigo-600"
             />
-            <span class="text-[12px] text-slate-700">Скрыть итоговую сумму</span>
+            <span class="text-[12px] text-slate-700"
+              >Скрыть итоговую сумму</span
+            >
           </label>
         </div>
+      </section>
 
+      <button
+        id="createOrSaveBtn"
+        type="button"
+        disabled
+        class="mt-3 inline-flex items-center justify-center w-full px-6 py-3 rounded-md text-[13px] font-medium bg-black text-white hover:bg-slate-800 disabled:opacity-50 disabled:cursor-default transition-colors"
+      >
+        Создать ссылку
+      </button>
+
+      <!-- Кнопка удаления ссылки -->
+      <div class="flex justify-center">
         <button
-          id="createOrSaveBtn"
+          id="deleteLinkBtn"
           type="button"
           disabled
-          class="mt-3 inline-flex items-center justify-center w-full px-3 py-2 rounded-lg text-[13px] font-medium bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-50 disabled:cursor-default transition-colors"
+          class="mt-2 mx-auto inline-flex items-center justify-center gap-1 text-[12px] text-red-500 hover:text-red-600 disabled:opacity-40 disabled:cursor-default"
         >
-          Создать ссылку
+          <span class="text-[14px]">🗑</span>
+          <span>Удалить ссылку</span>
         </button>
-
-        <div
-          id="statusText"
-          class="mt-2 text-xs text-slate-500"
-        ></div>
-      </section>
+      </div>
     </div>
+
+    <!-- Статус — маленький текст внизу, для себя -->
+    <div id="statusText" class="mt-2 text-[11px] text-slate-400"></div>
 
     <script>
       (function () {
         // ⚙️ НАСТРОЙКИ — ПОДСТАВЬ СВОЙ БЭКЕНД
-        var BACKEND_BASE_URL = "https://flawiest-overjoyous-chang.ngrok-free.dev/api";
-        var PUBLIC_ORDER_ENDPOINT = BACKEND_BASE_URL + "/moysklad/public-order/";
+        var BACKEND_BASE_URL =
+          "https://flawiest-overjoyous-chang.ngrok-free.dev/api";
+        var PUBLIC_ORDER_ENDPOINT =
+          BACKEND_BASE_URL + "/moysklad/public-order/";
 
         // --- helpers DOM ---
         function $(id) {
@@ -130,30 +129,16 @@
           if (el) el.disabled = disabled;
         }
 
-        function setBadge(exists) {
-          var el = $("linkBadge");
-          if (!el) return;
-          if (exists) {
-            el.className =
-              "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium bg-emerald-100 text-emerald-700";
-            el.textContent = "Ссылка создана";
-          } else {
-            el.className =
-              "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium bg-slate-200 text-slate-700";
-            el.textContent = "Ссылка не создана";
-          }
-        }
-
         function setStatus(text, type) {
           var el = $("statusText");
           if (!el) return;
-          var base = "mt-2 text-xs ";
+          var base = "mt-2 text-[11px] ";
           var color =
             type === "ok"
               ? "text-emerald-600"
               : type === "error"
               ? "text-red-600"
-              : "text-slate-500";
+              : "text-slate-400";
           el.className = base + color;
           el.textContent = text || "";
         }
@@ -176,15 +161,15 @@
         // Синхронизация формы с ответом бэкенда
         function syncFormFromResponse(data) {
           var exists = !!data && !!data.exists;
-          setBadge(exists);
 
           var linkEmpty = $("linkEmpty");
           var linkArea = $("linkArea");
           var urlInput = $("linkUrl");
-          var copyBtn = $("copyBtn");
           var mainBtn = $("createOrSaveBtn");
+          var deleteBtn = $("deleteLinkBtn");
 
-          if (!urlInput || !linkEmpty || !linkArea || !mainBtn) return;
+          if (!urlInput || !linkEmpty || !linkArea || !mainBtn || !deleteBtn)
+            return;
 
           if (exists && data.link_url) {
             // Показать блок со ссылкой
@@ -194,6 +179,7 @@
             urlInput.value = data.link_url;
             setDisabled("copyBtn", false);
             setDisabled("createOrSaveBtn", false);
+            setDisabled("deleteLinkBtn", false);
 
             mainBtn.textContent = "Обновить ссылку";
           } else {
@@ -205,6 +191,7 @@
             urlInput.placeholder = "Ссылка ещё не создана";
             setDisabled("copyBtn", true);
             setDisabled("createOrSaveBtn", false);
+            setDisabled("deleteLinkBtn", true);
 
             mainBtn.textContent = "Создать ссылку";
           }
@@ -309,13 +296,54 @@
             })
             .catch(function (err) {
               console.error("Failed to save public order:", err);
-              setStatus(
-                "Ошибка сохранения ссылки: " + err.message,
-                "error"
-              );
+              setStatus("Ошибка сохранения ссылки: " + err.message, "error");
             })
             .finally(function () {
               setDisabled("createOrSaveBtn", false);
+            });
+        }
+
+        // 🗑 Удаление ссылки
+        function deletePublicOrder() {
+          if (!contextKey || !objectId) {
+            setStatus(
+              "Нет contextKey или objectId — МойСклад ещё не передал контекст",
+              "error"
+            );
+            return;
+          }
+
+          if (!confirm("Удалить ссылку для этого заказа?")) {
+            return;
+          }
+
+          setStatus("Удаляем ссылку…", "info");
+          setDisabled("deleteLinkBtn", true);
+
+          var payload = {
+            context_key: contextKey,
+            ms_order_id: objectId,
+          };
+
+          fetch(PUBLIC_ORDER_ENDPOINT, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+          })
+            .then(function (res) {
+              if (!res.ok && res.status !== 204) {
+                throw new Error("HTTP " + res.status);
+              }
+              setStatus("Ссылка удалена", "ok");
+              // Сбрасываем состояние формы
+              syncFormFromResponse({ exists: false });
+            })
+            .catch(function (err) {
+              console.error("Failed to delete public order:", err);
+              setStatus("Ошибка удаления ссылки: " + err.message, "error");
+              setDisabled("deleteLinkBtn", false);
             });
         }
 
@@ -378,6 +406,7 @@
         window.addEventListener("DOMContentLoaded", function () {
           var createBtn = $("createOrSaveBtn");
           var copyBtn = $("copyBtn");
+          var deleteBtn = $("deleteLinkBtn");
 
           if (createBtn) {
             createBtn.addEventListener("click", function () {
@@ -387,6 +416,11 @@
           if (copyBtn) {
             copyBtn.addEventListener("click", function () {
               copyLinkToClipboard();
+            });
+          }
+          if (deleteBtn) {
+            deleteBtn.addEventListener("click", function () {
+              deletePublicOrder();
             });
           }
 
