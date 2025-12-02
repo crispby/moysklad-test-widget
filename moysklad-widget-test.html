@@ -4,23 +4,42 @@
     <meta charset="utf-8" />
     <meta name="description" content="PrettyOrder Widget for MoySklad" />
 
+    <!-- Google Fonts: JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
     <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
 
     <script>
       tailwind.config = {
         theme: {
-          extend: {},
+          extend: {
+            fontFamily: {
+              jet: [
+                '"JetBrains Mono"',
+                "ui-monospace",
+                "SFMono-Regular",
+                "Menlo",
+                "monospace",
+              ],
+            },
+          },
         },
       };
     </script>
   </head>
-  <body class="h-full m-0 p-0 box-border font-sans text-[13px] leading-snug">
+  <body class="h-full m-0 p-0 box-border font-jet text-[13px] leading-snug">
     <div class="space-y-3">
       <!-- Заголовок -->
-       
-      <div class="text-center bg-yellow-300/80 items-center justify-center gap-4 rounded-md p-2 py-1 mb-4">
-        <span class="animate-pulse text-lg ">⚡</span>
+
+      <div
+        class="text-center bg-yellow-300/80 flex items-center justify-center gap-4 rounded-md p-2 py-1 mb-4 "
+      >
+        <span class="animate-pulse text-2xl">⚡</span>
         <span class="text-xs text-slate-700">
           Формируем красивую подборку товаров по заказу покупателя и делимся
           ссылкой с клиентом.
