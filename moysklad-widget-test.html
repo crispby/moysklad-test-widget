@@ -130,10 +130,9 @@
             <span>Удалить ссылку</span>
           </button>
         </div>
-
-        <!-- Статус — по центру и внизу -->
       </div>
 
+      <!-- Статус — по центру и внизу -->
       <div
         id="statusText"
         class="mt-2 mb-1 text-[11px] text-slate-400 text-center"
@@ -187,6 +186,35 @@
         var objectId = null;
         var hostWindow = window.parent || window.top;
 
+        // 🔄 Сброс состояния виджета (важно при переходе между заказами)
+        function resetWidgetState() {
+          var linkEmpty = $("linkEmpty");
+          var linkArea = $("linkArea");
+          var urlInput = $("linkUrl");
+          var mainBtn = $("createOrSaveBtn");
+          var deleteBtn = $("deleteLinkBtn");
+          var copyBtn = $("copyBtn");
+
+          if (linkEmpty) linkEmpty.classList.remove("hidden");
+          if (linkArea) linkArea.classList.add("hidden");
+          if (urlInput) {
+            urlInput.value = "";
+            urlInput.placeholder = "Ссылка ещё не создана";
+          }
+
+          if (copyBtn) setDisabled("copyBtn", true);
+          if (mainBtn) {
+            mainBtn.textContent = "Создать ссылку";
+            setDisabled("createOrSaveBtn", false);
+          }
+          if (deleteBtn) setDisabled("deleteLinkBtn", true);
+
+          var hidePrices = $("hidePrices");
+          var hideTotal = $("hideTotal");
+          if (hidePrices) hidePrices.checked = false;
+          if (hideTotal) hideTotal.checked = false;
+        }
+
         // Синхронизация формы с ответом бэкенда
         function syncFormFromResponse(data) {
           var exists = !!data && !!data.exists;
@@ -227,9 +255,15 @@
 
           if (data && typeof data.hide_prices === "boolean") {
             $("hidePrices").checked = data.hide_prices;
+          } else {
+            // если с бэка не пришло — по умолчанию false
+            $("hidePrices").checked = false;
           }
+
           if (data && typeof data.hide_total === "boolean") {
             $("hideTotal").checked = data.hide_total;
+          } else {
+            $("hideTotal").checked = false;
           }
         }
 
@@ -275,7 +309,8 @@
                 "Ошибка загрузки состояния ссылки: " + err.message,
                 "error"
               );
-              loadPublicOrder(); 
+              // ВАЖНО: при ошибке очищаем UI, чтобы не висели данные прошлого заказа
+              resetWidgetState();
             })
             .finally(function () {
               setDisabled("createOrSaveBtn", false);
@@ -362,8 +397,8 @@
                 throw new Error("HTTP " + res.status);
               }
               setStatus("Ссылка удалена", "ok");
-              // Сбрасываем состояние формы
-              loadPublicOrder(); 
+              // локально сбрасываем состояние
+              resetWidgetState();
             })
             .catch(function (err) {
               console.error("Failed to delete public order:", err);
@@ -417,7 +452,11 @@
             objectId = receivedMessage.objectId || null;
             console.log("Got Open with objectId:", objectId);
 
-            // Загружаем/проверяем ссылку
+            // Новый заказ → сразу очищаем UI, чтобы не мигали старые данные
+            resetWidgetState();
+            setStatus("Загружаем данные по заказу…", "info");
+
+            // Загружаем/проверяем ссылку для этого заказа
             loadPublicOrder();
 
             // OpenFeedback (как в демо)
@@ -449,6 +488,7 @@
             });
           }
 
+          resetWidgetState();
           setStatus("Ждём данные от МойСклада…", "info");
           setDisabled("createOrSaveBtn", false);
         });
