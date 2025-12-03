@@ -275,7 +275,7 @@
                 "Ошибка загрузки состояния ссылки: " + err.message,
                 "error"
               );
-              syncFormFromResponse({ exists: false });
+              loadPublicOrder(); 
             })
             .finally(function () {
               setDisabled("createOrSaveBtn", false);
@@ -363,7 +363,7 @@
               }
               setStatus("Ссылка удалена", "ok");
               // Сбрасываем состояние формы
-              syncFormFromResponse({ exists: false });
+              loadPublicOrder(); 
             })
             .catch(function (err) {
               console.error("Failed to delete public order:", err);
